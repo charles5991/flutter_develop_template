@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_develop_template/common/mvvm/base_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_develop_template/common/mvvm/base_view_model.dart';
 import '../../router/page_route_observer.dart';
 import '../../router/routers.dart';
 import 'package:flutter_develop_template/common/widget/global_notification_widget.dart';
 import 'package:flutter_develop_template/module/message/view/message_v.dart';
+import 'package:flutter_develop_template/router/navigator_util.dart';
 
 import '../../res/style/color_styles.dart';
 import '../../res/style/theme_styles.dart';
@@ -33,8 +35,36 @@ MediaQueryData? media;
 /// 监听全局路由，比如获取 当前路由栈里 页面总数
 PageRouteObserver? pageRouteObserver;
 
-class App extends StatelessWidget {
-  const App({super.key});
+class App extends StatefulWidget {
+  const App({Key? key}) : super(key: key);
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Check if first launch
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      bool isFirstLaunch = await checkIfFirstLaunch();
+      if (isFirstLaunch) {
+        NavigatorUtil.push(navigatorKey.currentContext!, Routers.onboarding);
+      } else {
+        // If you already have default routing logic, you might not need this else branch
+        // NavigatorUtil.push(navigatorKey.currentContext!, Routers.root);
+      }
+    });
+  }
+  
+  // Helper method to check first launch
+  Future<bool> checkIfFirstLaunch() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstLaunch = prefs.getBool('first_launch') ?? true;
+    return isFirstLaunch;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,9 +191,10 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
   List<BottomNavigationBarItem> buildBottomNavBarItems() {
     return [
       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-      BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Message'),
-      BottomNavigationBarItem(icon: Icon(Icons.add_chart), label: 'Order'),
-      BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Personal'),
+      BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Deposit'),
+      BottomNavigationBarItem(icon: Icon(Icons.add_chart), label: 'Tools'),
+      BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Teams'),
+      BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Assets'),
     ];
   }
 

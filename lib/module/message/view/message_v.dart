@@ -78,7 +78,7 @@ class MessageViewState extends BaseStatefulPageState<MessageView, MessageViewMod
       appBar: AppBar(
           backgroundColor: AppBarTheme.of(context).backgroundColor,
           title: Text(
-            StrMessage.message,
+            'Deposit',
             style: TextStyles.style_222222_20,
           )),
       body: NotifierPageWidget<PageDataModel>(

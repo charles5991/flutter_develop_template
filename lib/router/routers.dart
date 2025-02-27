@@ -5,6 +5,7 @@ import 'package:flutter_develop_template/module/test_fluro/page_a.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_a2.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_b.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_c.dart';
+import 'package:flutter_develop_template/module/onboarding/view/onboarding_v.dart';
 
 import '../../module/order/view/order_v.dart';
 import '../../module/test_fluro/page_d.dart';
@@ -46,6 +47,9 @@ class Routers {
 
   // 页面D
   static String pageD = '/pageD';
+
+  // 引导页
+  static String onboarding = "/onboarding";
 
   // 注册路由
   static _initRouter() {
@@ -139,6 +143,14 @@ class Routers {
       pageD,
       handler: Handler(
         handlerFunc: (_, __) => PageDView(),
+      ),
+    );
+
+    // 引导页
+    router.define(
+      onboarding,
+      handler: Handler(
+        handlerFunc: (_, __) => OnboardingView(),
       ),
     );
   }

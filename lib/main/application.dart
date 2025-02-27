@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../res/string/str_common.dart';
+import 'package:fluro/fluro.dart';
 
 import '../../router/routers.dart';
 import 'app.dart';

@@ -12,7 +12,7 @@ class ThemeStyles {
 
   static ThemeData defaultTheme = ThemeData(
     // appBar主题
-    appBarTheme: AppBarTheme(backgroundColor: ColorStyles.color_0E6ED9),
+    appBarTheme: AppBarTheme(backgroundColor: ColorStyles.color_transparent),
     // 去除水波纹效果
     splashColor: ColorStyles.color_transparent,
     // 去除长按效果
