@@ -8,6 +8,7 @@ import 'package:flutter_develop_template/common/widget/global_notification_widge
 import 'package:flutter_develop_template/common/widget/notifier_widget.dart';
 import 'package:flutter_develop_template/main/app.dart';
 import 'package:flutter_develop_template/module/personal/model/user_info_m.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../../res/style/color_styles.dart';
 import '../../../../res/style/text_styles.dart';
@@ -22,6 +23,10 @@ class PersonalView extends BaseStatefulPage {
 }
 
 class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalViewModel> {
+  final RefreshController _refreshController = RefreshController();
+  String quotaValue = '97147.86';
+  String todayEarnings = '5.49';
+
   @override
   void initAttribute() {}
 
@@ -53,96 +58,231 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
   }
 
   @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget appBuild(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayBlackStyle,
       child: Material(
+        color: Colors.grey[100], // Light background color
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: EdgeInsets.only(top: kToolbarHeight + media!.padding.top),
-                alignment: Alignment.center,
-                child: ElevatedButton(
-                  child: Text(StrPersonal.register),
-                  onPressed: () {
-                    // 如果你想刷新的时候，显示loading，加上这两行
-                    viewModel?.pageDataModel?.type = NotifierResultType.loading;
-                    viewModel?.pageDataModel?.refreshState();
-
-                    var str1 = Random().nextInt(9);
-                    var str2 = Random().nextInt(9);
-                    var str3 = Random().nextInt(9);
-                    var str4 = Random().nextInt(9);
-                    var str5 = Random().nextInt(9);
-                    viewModel?.registerUser(params: {
-                      'username': '${str1}${str2}${str3}${str4}${str5}',
-                      'password': '123456',
-                      'repassword': '123456'
-                    });
-                  },
+            SmartRefresher(
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile Section
+                    Container(
+                      color: Colors.white,
+                      padding: EdgeInsets.only(
+                        top: kToolbarHeight + media!.padding.top + 16,
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Row(
+                        children: [
+                          // Avatar
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage: AssetImage('assets/avatar.png'), // Add your avatar image
+                          ),
+                          SizedBox(width: 16),
+                          // User Info
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Umoney888',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(Icons.copy, size: 20, color: Colors.indigo[700]),
+                                  ],
+                                ),
+                                SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '880422300',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(Icons.copy, size: 20, color: Colors.indigo[700]),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          // More options
+                          IconButton(
+                            icon: Icon(Icons.more_vert),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    // Quota Card with refreshable value
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Quota',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.indigo[700],
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Details',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            '₹ $quotaValue',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigo[700],
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Today's earnings",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            todayEarnings,
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    // Common Functions
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Common Function',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    // Grid of functions
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisCount: 4,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        _buildFunctionButton('Quota', Icons.bolt_outlined),
+                        _buildFunctionButton('Deposit', Icons.account_balance_wallet_outlined),
+                        _buildFunctionButton('Withdrawal', Icons.credit_card_outlined),
+                        _buildFunctionButton('Service', Icons.headset_mic_outlined),
+                        _buildFunctionButton('Inbox', Icons.mail_outline),
+                        _buildFunctionButton('Password', Icons.lock_outline),
+                        _buildFunctionButton('Pin', Icons.shield_outlined),
+                        _buildFunctionButton('Logout', Icons.logout),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: EdgeInsets.only(top: kToolbarHeight + media!.padding.top + 100),
-                alignment: Alignment.center,
-                child: ElevatedButton(
-                  child: Text(StrPersonal.login),
-                  onPressed: () {
-                    // 如果你想刷新的时候，显示loading，加上这两行
-                    viewModel?.pageDataModel?.type = NotifierResultType.loading;
-                    viewModel?.pageDataModel?.refreshState();
-
-                    viewModel?.loginUser(params: {
-                      'username': 'aaaaaa',
-                      'password': '123456',
-                    });
-                  },
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: EdgeInsets.only(top: kToolbarHeight + media!.padding.top + 200),
-                alignment: Alignment.center,
-                child: ElevatedButton(
-                  child: Text(StrPersonal.switchUser),
-                  onPressed: () {
-                    // 更新本地存储的用户ID，（常用的本地存储库：shared_preferences）
-                    // ... ...
-
-                    // 通知所有继承 BaseStatefulPageState 的子页面
-                    GlobalOperateProvider.runGlobalOperate(context: context, operate: GlobalOperate.switchLogin);
-                  },
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: kToolbarHeight + media!.padding.top),
-              color: ColorStyles.color_388E3C,
-              child: executeSwitchLogin
-                  ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(StrPersonal.switchUser),
-                  IconButton(
-                      onPressed: () {
-                        executeSwitchLogin = false;
-                        setState(() {});
-                      },
-                      icon: Icon(Icons.close))
-                ],
-              )
-                  : SizedBox(),
             ),
             _myAppBar(),
+            
+            // Keep the original login functionality but commented out
+            /*
+            Original login buttons and functionality here
+            */
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFunctionButton(String label, IconData icon) {
+    return Container(
+      margin: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 24, color: Colors.black87),
+          SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.black87,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -151,9 +291,9 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
     return Container(
       width: media!.size.width,
       height: kToolbarHeight + media!.padding.top,
-      padding: EdgeInsets.only(top: media!.padding.top,left: 16),
+      padding: EdgeInsets.only(top: media!.padding.top),
       color: AppBarTheme.of(context).backgroundColor,
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       child: Builder(
         builder: (context) {
           /// 初始化状态设置为 不检查，不然会 返回 loading 组件
@@ -172,6 +312,23 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
         }
       ),
     );
+  }
+
+  Future<void> _onRefresh() async {
+    // Simulate API call with delay
+    await Future.delayed(Duration(seconds: 2));
+    
+    // In real app, you would fetch actual data from your API
+    setState(() {
+      // Update with random values for demonstration
+      double newQuota = double.parse(quotaValue) + (Random().nextDouble() * 10 - 5);
+      double newEarnings = double.parse(todayEarnings) + (Random().nextDouble() * 2 - 1);
+      
+      quotaValue = newQuota.toStringAsFixed(2);
+      todayEarnings = newEarnings.toStringAsFixed(2);
+    });
+
+    _refreshController.refreshCompleted();
   }
 
   @override

@@ -426,7 +426,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
               
-              // Add OTP Input field
+              // Update the OTP Input field with Form and validation
               SizedBox(height: 24),
               Text(
                 'Enter OTP',
@@ -438,18 +438,31 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
+                  border: Border.all(
+                    color: otpController.text.length == 6 
+                        ? Colors.green 
+                        : Colors.grey[300]!,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextField(
                   controller: otpController,
                   keyboardType: TextInputType.number,
                   maxLength: 6,
+                  onChanged: (value) {
+                    // Trigger rebuild to update button state and border color
+                    setState(() {});
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     counterText: '',
                     hintText: 'Enter 6-digit OTP',
                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    // Add error text if OTP is not 6 digits
+                    errorText: otpController.text.isNotEmpty && 
+                             otpController.text.length != 6 
+                        ? 'Please enter 6 digits' 
+                        : null,
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -458,7 +471,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
 
               Spacer(),
-              // Previous/Next buttons
+              // Update the Previous/Next buttons
               Row(
                 children: [
                   Expanded(
@@ -477,26 +490,27 @@ class _OtpScreenState extends State<OtpScreen> {
                   SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // In dev mode, allow any 6-digit OTP
-                        if (otpController.text.length == 6) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SuccessScreen(
-                                upiId: '${widget.phoneNumber}@ikwik',
-                                name: widget.name,
-                              ),
-                            ),
-                          );
-                        }
-                      },
+                      onPressed: otpController.text.length == 6 
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SuccessScreen(
+                                    upiId: '${widget.phoneNumber}@ikwik',
+                                    name: widget.name,
+                                  ),
+                                ),
+                              );
+                            }
+                          : null, // Disable button if OTP is not 6 digits
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.indigo[700],
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
+                        // Add disabled color
+                        disabledBackgroundColor: Colors.grey[400],
                       ),
                       child: Text(
                         'Next',

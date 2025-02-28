@@ -15,6 +15,7 @@ import '../../res/style/theme_styles.dart';
 import '../module/home/view/home_v.dart';
 import '../module/order/view/order_v.dart';
 import '../module/personal/view/personal_v.dart';
+import '../module/teams/view/teams_v.dart';
 
 /// App初始化的第一个页面可能是 其他页面，比如 广告、引导页、登陆页面
 enum AppInitState {
@@ -193,6 +194,7 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
       BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Deposit'),
       BottomNavigationBarItem(icon: Icon(Icons.add_chart), label: 'Tools'),
+      BottomNavigationBarItem(icon: Icon(Icons.groups), label: 'Teams'),
       BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Assets'),
     ];
   }
@@ -206,6 +208,7 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
         HomeView(),
         MessageView(),
         OrderView(),
+        TeamsView(),
         PersonalView(),
       ],
     );

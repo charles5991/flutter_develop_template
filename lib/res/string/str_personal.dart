@@ -5,7 +5,7 @@
 /// 个人
 class StrPersonal {
 
-  static const String personal = 'Personal';
+  static const String personal = 'Assets';
   static const String register = '注册';
   static const String switchUser = '切换用户';
   static const String loginSuccess = '登陆成功';
