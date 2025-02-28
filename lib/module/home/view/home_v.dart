@@ -29,12 +29,13 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
 
   @override
   void initAttribute() {
+    // 进入页面初始化 请求数据 的加载中 状态
     // Initialize with data immediately to prevent initial loading state
-    Future.microtask(() {
-      if (viewModel?.pageDataModel?.type == NotifierResultType.loading) {
-        viewModel?.requestData(params: {'curPage': 1});
-      }
-    });
+    // Future.microtask(() {
+    //   if (viewModel?.pageDataModel?.type == NotifierResultType.loading) {
+    //     viewModel?.requestData(params: {'curPage': 1});
+    //   }
+    // });
   }
 
   @override
@@ -66,19 +67,19 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
     // 切换用户
     // 正常业务流程是：从本地存储，拿到当前最新的用户ID，请求接口，我这里偷了个懒 😄
     // 直接使用随机数，模拟 不同用户ID
-    if (operate == GlobalOperate.switchLogin) {
-      executeSwitchLogin = true;
+    // if (operate == GlobalOperate.switchLogin) {
+    //   executeSwitchLogin = true;
 
-      // 重新请求数据
-      // 如果你想刷新的时候，显示loading，加上这两行
-      // viewModel?.pageDataModel?.type = NotifierResultType.loading;
-      // viewModel?.pageDataModel?.refreshState();
+    //   // 重新请求数据
+    //   // 如果你想刷新的时候，显示loading，加上这两行
+    //   // viewModel?.pageDataModel?.type = NotifierResultType.loading;
+    //   // viewModel?.pageDataModel?.refreshState();
 
-      viewModel?.requestData(params: {'curPage': Random().nextInt(10)});
-    } else if (!executeSwitchLogin && viewModel?.pageDataModel?.type == NotifierResultType.loading) {
-      // Initialize with data if we're in loading state on first load
-      viewModel?.requestData(params: {'curPage': 1});
-    }
+    //   viewModel?.requestData(params: {'curPage': Random().nextInt(10)});
+    // } else if (!executeSwitchLogin && viewModel?.pageDataModel?.type == NotifierResultType.loading) {
+    //   // Initialize with data if we're in loading state on first load
+    //   viewModel?.requestData(params: {'curPage': 1});
+    // }
   }
 
   ValueNotifier<int> tapNum = ValueNotifier<int>(0);
@@ -300,7 +301,57 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(Icons.more_vert),
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert),
+                  onSelected: (String choice) {
+                    // Handle menu item selection
+                    switch (choice) {
+                      case 'Details':
+                        // Add your action for Details
+                        break;
+                      case 'Share':
+                        // Add your action for Share
+                        break;
+                      case 'Download':
+                        // Add your action for Download
+                        break;
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<String>(
+                        value: 'Details',
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline, color: Colors.blue),
+                            SizedBox(width: 8),
+                            Text('Details'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'Share',
+                        child: Row(
+                          children: [
+                            Icon(Icons.share, color: Colors.green),
+                            SizedBox(width: 8),
+                            Text('Share'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'Download',
+                        child: Row(
+                          children: [
+                            Icon(Icons.download, color: Colors.orange),
+                            SizedBox(width: 8),
+                            Text('Download'),
+                          ],
+                        ),
+                      ),
+                    ];
+                  },
+                ),
               ],
             ),
             SizedBox(height: 20),
@@ -397,7 +448,7 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
             SizedBox(height: 15),
             _buildHelpItem(
               icon: Icons.account_balance_wallet,
-              title: 'Earn money using Mobikwik wallet?',
+              title: 'How to use Mobikwik wallet',
               subtitle: 'Watch Video >',
               iconColor: Colors.blue,
             ),
@@ -412,83 +463,408 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
       required String subtitle,
       required Color iconColor,
     }) {
-      return Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: iconColor,
-              borderRadius: BorderRadius.circular(10),
+      return GestureDetector(
+        onTap: () {
+          if (subtitle == 'Detail') {
+            _showDetailModal(context, title);
+          } else if (subtitle.contains('Watch Video')) {
+            _showVideoModal(context, title);
+          }
+        },
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: iconColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 30,
+              ),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-          SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+            SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.orange,
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.orange,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
-      // Add this property to track current carousel page
-      int _currentCarouselIndex = 0;
+    // Show detail modal
+    void _showDetailModal(BuildContext context, String title) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) => Container(
+          padding: EdgeInsets.all(20),
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              Divider(),
+              SizedBox(height: 15),
+              Text(
+                'Getting Started with Umoney',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailStep(
+                        number: '1',
+                        title: 'Create an Account',
+                        description: 'Sign up with your phone number and verify your identity with a valid ID.',
+                      ),
+                      _buildDetailStep(
+                        number: '2',
+                        title: 'Add Money to Wallet',
+                        description: 'Link your bank account or use UPI to add funds to your Umoney wallet.',
+                      ),
+                      _buildDetailStep(
+                        number: '3',
+                        title: 'Make Payments',
+                        description: 'Use Umoney for bill payments, shopping, and sending money to friends and family.',
+                      ),
+                      _buildDetailStep(
+                        number: '4',
+                        title: 'Earn Rewards',
+                        description: 'Get cashback and rewards on transactions made through Umoney.',
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Umoney is a secure digital wallet that allows you to make payments, transfer money, and earn rewards. With Umoney, you can manage your finances on the go and enjoy a seamless payment experience.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
-    // Custom painter for pie chart
-    class PieChartPainter extends CustomPainter {
-      final double percentage;
-      
-      PieChartPainter({this.percentage = 0.25});
-      
-      @override
-      void paint(Canvas canvas, Size size) {
-        final center = Offset(size.width / 2, size.height / 2);
-        final radius = min(size.width, size.height) / 2;
-        
-        // Background circle (light gray)
-        final backgroundPaint = Paint()
-          ..color = Colors.grey.shade200
-          ..style = PaintingStyle.fill;
-        
-        canvas.drawCircle(center, radius, backgroundPaint);
-        
-        // Foreground segment (orange)
-        final segmentPaint = Paint()
-          ..color = Colors.orange
-          ..style = PaintingStyle.fill;
-        
-        // Draw a segment representing the percentage
-        canvas.drawArc(
-          Rect.fromCircle(center: center, radius: radius),
-          -pi / 2,  // Start from top
-          2 * pi * percentage,   // Arc based on percentage
-          true,
-          segmentPaint,
-        );
-      }
-
-      @override
-      bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+    // Build detail step widget
+    Widget _buildDetailStep({
+      required String number,
+      required String title,
+      required String description,
+    }) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  number,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
+
+    // Show video modal
+    void _showVideoModal(BuildContext context, String title) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) => Container(
+          padding: EdgeInsets.all(20),
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              Divider(),
+              SizedBox(height: 15),
+              // Video player placeholder - increased height from 200 to 250
+              Container(
+                height: 250, // Increased height
+                width: double.infinity, // Ensure it takes full width
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.play_circle_fill,
+                      color: Colors.white.withOpacity(0.7),
+                      size: 80, // Increased icon size from 60 to 80
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      left: 10,
+                      child: Text(
+                        'Earn with Umoney - Tutorial',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16, // Increased font size
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Ways to Earn',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildEarningMethod(
+                        icon: Icons.card_giftcard,
+                        title: 'Referral Program',
+                        description: 'Invite friends and earn ₹50 for each successful referral.',
+                      ),
+                      _buildEarningMethod(
+                        icon: Icons.shopping_bag,
+                        title: 'Cashback on Shopping',
+                        description: 'Get up to 10% cashback when you shop with partner merchants.',
+                      ),
+                      _buildEarningMethod(
+                        icon: Icons.account_balance,
+                        title: 'Bill Payments',
+                        description: 'Earn rewards on utility bill payments and recharges.',
+                      ),
+                      _buildEarningMethod(
+                        icon: Icons.savings,
+                        title: 'Savings Challenge',
+                        description: 'Join monthly savings challenges and win exciting prizes.',
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'Start Earning Now',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Build earning method widget
+    Widget _buildEarningMethod({
+      required IconData icon,
+      required String title,
+      required String description,
+    }) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.orange,
+                size: 24,
+              ),
+            ),
+            SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Add this property to track current carousel page
+    int _currentCarouselIndex = 0;
+  }
+
+  // Custom painter for pie chart
+  class PieChartPainter extends CustomPainter {
+    final double percentage;
+    
+    PieChartPainter({this.percentage = 0.25});
+    
+    @override
+    void paint(Canvas canvas, Size size) {
+      final center = Offset(size.width / 2, size.height / 2);
+      final radius = min(size.width, size.height) / 2;
+      
+      // Background circle (light gray)
+      final backgroundPaint = Paint()
+        ..color = Colors.grey.shade200
+        ..style = PaintingStyle.fill;
+      
+      canvas.drawCircle(center, radius, backgroundPaint);
+      
+      // Foreground segment (orange)
+      final segmentPaint = Paint()
+        ..color = Colors.orange
+        ..style = PaintingStyle.fill;
+      
+      // Draw a segment representing the percentage
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        -pi / 2,  // Start from top
+        2 * pi * percentage,   // Arc based on percentage
+        true,
+        segmentPaint,
+      );
+    }
+
+    @override
+    bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  }
