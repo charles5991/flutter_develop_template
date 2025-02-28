@@ -90,15 +90,23 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                       child: Row(
                         children: [
                           // Avatar
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.grey[200],
-                            backgroundImage: AssetImage('assets/avatar.png'), // Add your avatar image
+                          Container(
+                            width: 60,  // Square size
+                            height: 60, // Square size
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12), // Rounded corners
+                              color: Colors.grey[200],
+                              image: DecorationImage(
+                                image: AssetImage('assets/avatar.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           SizedBox(width: 16),
                           // User Info
                           Expanded(
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
@@ -106,26 +114,56 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                                     Text(
                                       'Umoney888',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    SizedBox(width: 8),
-                                    Icon(Icons.copy, size: 20, color: Colors.indigo[700]),
+                                    SizedBox(width: 4),
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: BoxConstraints(),
+                                      icon: Icon(Icons.copy, size: 16, color: Colors.indigo[700]),
+                                      onPressed: () async {
+                                        await Clipboard.setData(ClipboardData(text: 'Umoney888'));
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Username copied to clipboard'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
+                                SizedBox(height: 0),
                                 Row(
                                   children: [
                                     Text(
                                       '880422300',
                                       style: TextStyle(
                                         color: Colors.grey[600],
-                                        fontSize: 16,
+                                        fontSize: 14,
                                       ),
                                     ),
-                                    SizedBox(width: 8),
-                                    Icon(Icons.copy, size: 20, color: Colors.indigo[700]),
+                                    SizedBox(width: 4),
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: BoxConstraints(),
+                                      icon: Icon(Icons.copy, size: 16, color: Colors.indigo[700]),
+                                      onPressed: () async {
+                                        await Clipboard.setData(ClipboardData(text: '880422300'));
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('ID copied to clipboard'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ],
                                 ),
                               ],
