@@ -49,11 +49,8 @@ class PageBViewState extends BaseStatefulPageState<PageBView,PageBViewModel> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('name：${widget.paramsModel?.name}'),
-            Text('title：${widget.paramsModel?.title}'),
-            Text('url：${widget.paramsModel?.url}'),
-            Text('age：${widget.paramsModel?.age}'),
-            Text('price：${widget.paramsModel?.price}'),
-            Text('flag：${widget.paramsModel?.flag}'),
+            Text('acc：${widget.paramsModel?.acc}'),
+            Text('upi：${widget.paramsModel?.upi}'),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {

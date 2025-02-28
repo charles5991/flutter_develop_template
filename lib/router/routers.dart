@@ -1,7 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_develop_template/main/app.dart';
-import 'package:flutter_develop_template/module/test_fluro/page_a.dart';
+// import 'package:flutter_develop_template/module/test_fluro/page_a.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_a2.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_b.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_c.dart';
@@ -67,57 +67,49 @@ class Routers {
     );
 
     // 页面A 需要 非对象类型 参数（通过 拼接 传参数）
-    router.define(
-      pageA,
-      handler: Handler(
-        handlerFunc: (_, Map<String, List<String>> params) {
+    // router.define(
+    //   pageA,
+    //   handler: Handler(
+    //     handlerFunc: (_, Map<String, List<String>> params) {
 
-          // 获取路由参数
-          String? name = params['name']?.first;
-          String? title = params['title']?.first;
-          String? url = params['url']?.first;
-          String? age = params['age']?.first ?? '-1';
-          String? price = params['price']?.first ?? '-1';
-          String? flag = params['flag']?.first ?? 'false';
+    //       // 获取路由参数
+    //       String? name = arguments['name'] as String?;
+    //       String? upi = arguments['upi'] as String?;
+    //       int? acc = arguments['acc'] as int?;
 
-          return PageAView(
-            name: name,
-            title: title,
-            url: url,
-            age: int.parse(age),
-            price: double.parse(price),
-            flag: bool.parse(flag)
-          );
+    //       return PageAView(
+    //         name: name,
+    //         upi: upi,
+    //         acc: acc,
+    //       );
 
-        },
-      ),
-    );
+    //     },
+    //   ),
+    // );
 
     // 页面A2 需要 非对象类型 参数（通过 arguments 传参数）
     router.define(
       pageA2,
       handler: Handler(
         handlerFunc: (context, _) {
+          // Fix 1: Get arguments from context.settings
+          final arguments = context?.settings?.arguments as Map<String, dynamic>?;
+          
+          // Fix 2: Handle null arguments case
+          if (arguments == null) {
+            return PageA2View();
+          }
 
-          // 获取路由参数
-          final arguments = context?.settings?.arguments as Map<String, dynamic>;
-
+          // Fix 3: Convert acc to String since it's coming as String from the UI
           String? name = arguments['name'] as String?;
-          String? title = arguments['title'] as String?;
-          String? url = arguments['url'] as String?;
-          int? age = arguments['age'] as int?;
-          double? price = arguments['price'] as double?;
-          bool? flag = arguments['flag'] as bool?;
+          String? upi = arguments['upi'] as String?;
+          String? acc = arguments['acc'] as String?;  // Changed from int? to String?
 
           return PageA2View(
-              name: name,
-              title: title,
-              url: url,
-              age: age,
-              price: price,
-              flag: flag ?? false
+            name: name,
+            upi: upi,
+            acc: acc,
           );
-
         },
       ),
     );

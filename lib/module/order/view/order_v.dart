@@ -22,12 +22,9 @@ class OrderViewState extends BaseStatefulPageState<OrderView, OrderViewModel> {
   @override
   void initAttribute() {
     paramsModel = TestParamsModel(
-      name: 'jk',
-      title: '张三',
-      url: 'https://www.baidu.com',
-      age: 99,
-      price: 9.9,
-      flag: true,
+      name: 'Mobikwik',
+      acc: '880423000',
+      upi: '880423000@ikwik',
     );
   }
 
@@ -130,12 +127,9 @@ class OrderViewState extends BaseStatefulPageState<OrderView, OrderViewModel> {
                                 context,
                                 Routers.pageA2,
                                 arguments: {
-                                  'name': 'jk',
-                                  'title': '张三',
-                                  'url': 'https://www.baidu.com',
-                                  'age': 99,
-                                  'price': 9.9,
-                                  'flag': true,
+                                  'name': 'Mobikwik',
+                                  'acc': '880423000',
+                                  'upi': '880423000@ikwik',
                                 },
                               );
                             },
@@ -217,23 +211,17 @@ class OrderViewState extends BaseStatefulPageState<OrderView, OrderViewModel> {
 
 class TestParamsModel {
   String? name;
-  String? title;
-  String? url;
-  int? age;
-  double? price;
-  bool? flag;
+  String? acc;
+  String? upi;
 
   TestParamsModel({
     this.name,
-    this.title,
-    this.url,
-    this.age,
-    this.price,
-    this.flag,
+    this.acc,
+    this.upi,
   });
 
   @override
   String toString() {
-    return 'TestParamsModel{name: $name, title: $title, url: $url, age: $age, price: $price, flag: $flag}';
+    return 'TestParamsModel{name: $name, acc: $acc, upi: $upi}';
   }
 }
