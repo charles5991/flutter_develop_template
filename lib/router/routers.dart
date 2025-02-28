@@ -5,6 +5,7 @@ import 'package:flutter_develop_template/module/test_fluro/page_a.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_a2.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_b.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_c.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_addTool.dart';
 import 'package:flutter_develop_template/module/onboarding/view/onboarding_v.dart';
 
 import '../../module/order/view/order_v.dart';
@@ -47,6 +48,9 @@ class Routers {
 
   // 页面D
   static String pageD = '/pageD';
+
+  // 页面AddTool
+  static String pageAddTool = '/pageAddTool';
 
   // 引导页
   static String onboarding = "/onboarding";
@@ -144,6 +148,12 @@ class Routers {
       handler: Handler(
         handlerFunc: (_, __) => PageDView(),
       ),
+    );
+
+    // 页面AddTool 无参数
+    router.define(
+      pageAddTool,
+      handler: Handler(handlerFunc: (_, __) => PageAddToolView()),
     );
 
     // 引导页

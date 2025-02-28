@@ -60,134 +60,137 @@ class OrderViewState extends BaseStatefulPageState<OrderView, OrderViewModel> {
 
   @override
   Widget appBuild(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppBarTheme.of(context).backgroundColor,
-        title: Text(
-          StrOrder.order,
-          style: TextStyles.style_222222_20,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppBarTheme.of(context).backgroundColor,
+          title: Text(
+            StrOrder.order,
+            style: TextStyles.style_222222_20,
+          ),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'UPI'),
+              Tab(text: 'BANK'),
+            ],
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+        body: TabBarView(
+          children: [
+            // UPI Tab
+            Stack(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    /// 传递 非对象参数 方式一：通过 拼接 传参数 了解即可，推荐使用方式二
-                    /// 在path后面，使用 '?' 拼接，再使用 '&' 分割
-
-                    String name = 'jk';
-
-                    /// Invalid argument(s): Illegal percent encoding in URI
-                    /// 出现这个异常，说明相关参数，需要转码一下
-                    /// 当前举例：中文、链接
-                    String title = Uri.encodeComponent('张三');
-                    String url = Uri.encodeComponent('https://www.baidu.com');
-
-                    int age = 99;
-                    double price = 9.9;
-                    bool flag = true;
-
-                    /// 注意：使用 path拼接方式 传递 参数，会改变原来的 路由页面 Path
-                    /// path会变成：/pageA?name=jk&title=%E5%BC%A0%E4%B8%89&url=https%3A%2F%2Fwww.baidu.com&age=99&price=9.9&flag=true
-                    /// 所以再次匹配pageA，找不到，需要还原一下，getOriginalPath(path)
-                    NavigatorUtil.push(context,
-                            '${Routers.pageA}?name=$name&title=$title&url=$url&age=$age&price=$price&flag=$flag')
-                        .then((result) {
-                      assert(() {
-                        debugPrint('PageA Pop的返回值：$result');
-                        return true;
-                      }());
-                    });
-                  },
-                  child: Text(StrOrder.noObjectToPageA),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    /// 传递 非对象参数 方式二：通过 arguments 传参数，推荐
-
-                    String name = 'jk';
-                    String title = '张三';
-                    String url = 'https://www.baidu.com';
-                    int age = 99;
-                    double price = 9.9;
-                    bool flag = true;
-
-                    NavigatorUtil.push(context,
-                        Routers.pageA2,
-                        arguments: {
-                          'name': name,
-                          'title': title,
-                          'url': url,
-                          'age': age,
-                          'price': price,
-                          'flag': flag,
-                        }
-                    ).then((result){
-                      assert(() {
-                        debugPrint('PageA2 Pop的返回值：$result');
-                        return true;
-                      }());
-                    });
-                  },
-                  child: Text(StrOrder.noObjectToPageA2),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    NavigatorUtil.push(
-                      context,
-                      Routers.pageB,
-                      arguments: TestParamsModel(
-                        name: 'jk',
-                        title: '张三',
-                        url: 'https://www.baidu.com',
-                        age: 99,
-                        price: 9.9,
-                        flag: true,
+                Column(
+                  children: [
+                    // UPI Card
+                    Container(
+                      margin: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[700],
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ).then((result) {
-                      assert(() {
-                        debugPrint('PageB Pop的返回值：$result');
-                        return true;
-                      }());
-                    });
-                  },
-                  child: Text(StrOrder.objectToPageB),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '880423000@ikwik',
+                                    style: TextStyle(color: Colors.white, fontSize: 16),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    '880423000',
+                                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              CircleAvatar(
+                                backgroundColor: Colors.grey[300],
+                                child: Icon(Icons.person, color: Colors.indigo),
+                                radius: 25,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'Please relink the tool or modify the upi and relink',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          SizedBox(height: 8),
+                          TextButton(
+                            onPressed: () {
+                              NavigatorUtil.push(
+                                context,
+                                Routers.pageA2,
+                                arguments: {
+                                  'name': 'jk',
+                                  'title': '张三',
+                                  'url': 'https://www.baidu.com',
+                                  'age': 99,
+                                  'price': 9.9,
+                                  'flag': true,
+                                },
+                              );
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              'Authorize',
+                              style: TextStyle(
+                                color: Colors.white, 
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    // Add Tool Button
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigo[700],
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            NavigatorUtil.push(
+                              context,
+                              Routers.pageAddTool,
+                            );
+                          },
+                          child: Text(
+                            'Add Tool',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                  child: Text("上报 同步异常"),
-                  onPressed: pushSyncError,
-                ),
-                ElevatedButton(
-                  child: Text("上报 异步异常"),
-                  onPressed: pushAsyncError,
-                )
               ],
             ),
-          ),
-          Container(
-            color: ColorStyles.color_388E3C,
-            child: executeSwitchLogin
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(StrCommon.executeSwitchUser),
-                      IconButton(
-                          onPressed: () {
-                            executeSwitchLogin = false;
-                            setState(() {});
-                          },
-                          icon: Icon(Icons.close))
-                    ],
-                  )
-                : SizedBox(),
-          ),
-        ],
+            // BANK Tab (Empty for now)
+            Center(child: Text('Bank tab content coming soon')),
+          ],
+        ),
       ),
     );
   }

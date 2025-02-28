@@ -193,7 +193,6 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
       BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Deposit'),
       BottomNavigationBarItem(icon: Icon(Icons.add_chart), label: 'Tools'),
-      BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Teams'),
       BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Assets'),
     ];
   }
