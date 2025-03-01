@@ -5,6 +5,7 @@ import 'package:flutter_develop_template/main/app.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_a2.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_b.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_c.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_personal_quota.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_addTool.dart';
 import 'package:flutter_develop_template/module/onboarding/view/onboarding_v.dart';
 
@@ -54,6 +55,9 @@ class Routers {
 
   // 引导页
   static String onboarding = "/onboarding";
+
+  // Quota明细
+  static String personalQuota = "/personalQuota";
 
   // 注册路由
   static _initRouter() {
@@ -154,6 +158,12 @@ class Routers {
       handler: Handler(
         handlerFunc: (_, __) => OnboardingView(),
       ),
+    );
+
+    // Quota明细
+    router.define(
+      personalQuota,
+      handler: Handler(handlerFunc: (_, __) => PersonalQuotaView()),
     );
   }
 
