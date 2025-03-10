@@ -269,19 +269,19 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
 
   Widget _buildNavItem(int index) {
     final List<IconData> unselectedIcons = [
-      Icons.chat_bubble_outline,
-      Icons.search,
-      Icons.access_time,
-      Icons.notifications_none,
-      Icons.person_outline,
+      Icons.home_outlined,                    // Home icon
+      Icons.account_balance_wallet_outlined,  // Wallet/Money icon for Deposit
+      Icons.build_circle_outlined,            // Tools icon
+      Icons.groups_outlined,                  // Teams icon
+      Icons.person_outlined,                  // Person icon for Assets
     ];
 
     final List<IconData> selectedIcons = [
-      Icons.chat_bubble,
-      Icons.search,
-      Icons.access_time,
-      Icons.notifications,
-      Icons.person,
+      Icons.home,                         // Filled home icon
+      Icons.account_balance_wallet,       // Filled wallet icon
+      Icons.build_circle,                 // Filled tools icon
+      Icons.groups,                       // Filled teams icon
+      Icons.person,                       // Filled person icon
     ];
 
     final List<String> labels = ['Home', 'Deposit', 'Tools', 'Teams', 'Assets'];
