@@ -278,8 +278,12 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                         _buildFunctionButton('Quota', Icons.bolt_outlined, () {
                           NavigatorUtil.push(context, Routers.personalQuota);
                         }),
-                        _buildFunctionButton('Deposit', Icons.account_balance_wallet_outlined, () {}),
-                        _buildFunctionButton('Withdrawal', Icons.credit_card_outlined, () {}),
+                        _buildFunctionButton('Deposit', Icons.account_balance_wallet_outlined, () {
+                          NavigatorUtil.push(context, Routers.personalDeposit);
+                        }),
+                        _buildFunctionButton('Withdrawal', Icons.credit_card_outlined, () {
+                          NavigatorUtil.push(context, Routers.personalWithdrawal);
+                        }),
                         _buildFunctionButton('Service', Icons.headset_mic_outlined, () {}),
                         _buildFunctionButton('Inbox', Icons.mail_outline, () {}),
                         _buildFunctionButton('Password', Icons.lock_outline, () {

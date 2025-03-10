@@ -14,6 +14,8 @@ import '../../module/order/view/order_v.dart';
 import '../../module/test_fluro/page_d.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_change_password.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_change_pin.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_deposit.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_withdrawal.dart';
 
 class Routers {
   static FluroRouter router = FluroRouter();
@@ -69,6 +71,8 @@ class Routers {
   // Add these new routes
   static String personalPassword = "/personal/password";
   static String personalPin = "/personal/pin";
+  static String personalDeposit = "/personal/deposit";
+  static String personalWithdrawal = "/personal/withdrawal";
 
   // 注册路由
   static _initRouter() {
@@ -202,6 +206,19 @@ class Routers {
     router.define(personalPin, handler: Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
         return PageChangePin();
+      }
+    ));
+
+    // Add these new route handlers
+    router.define(personalDeposit, handler: Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return PageDeposit();
+      }
+    ));
+    
+    router.define(personalWithdrawal, handler: Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return PageWithdrawal();
       }
     ));
   }
