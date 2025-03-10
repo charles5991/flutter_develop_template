@@ -12,6 +12,8 @@ import 'package:flutter/cupertino.dart';
 
 import '../../module/order/view/order_v.dart';
 import '../../module/test_fluro/page_d.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_change_password.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_change_pin.dart';
 
 class Routers {
   static FluroRouter router = FluroRouter();
@@ -63,6 +65,10 @@ class Routers {
 
   // Quota明细
   static String personalQuota = "/personalQuota";
+
+  // Add these new routes
+  static String personalPassword = "/personal/password";
+  static String personalPin = "/personal/pin";
 
   // 注册路由
   static _initRouter() {
@@ -181,10 +187,22 @@ class Routers {
     );
 
     // Quota明细
-    // router.define(
-    //   personalQuota,
-    //   handler: Handler(handlerFunc: (_, __) => PersonalQuotaView()),
-    // );
-  }
+    router.define(
+      personalQuota,
+      handler: Handler(handlerFunc: (_, __) => PagePersonalQuota()),
+    );
 
+    // Add these new route handlers
+    router.define(personalPassword, handler: Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return PageChangePassword();
+      }
+    ));
+    
+    router.define(personalPin, handler: Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return PageChangePin();
+      }
+    ));
+  }
 }

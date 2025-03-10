@@ -9,6 +9,8 @@ import 'package:flutter_develop_template/common/widget/notifier_widget.dart';
 import 'package:flutter_develop_template/main/app.dart';
 import 'package:flutter_develop_template/module/personal/model/user_info_m.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_develop_template/router/navigator_util.dart';
+import 'package:flutter_develop_template/router/routers.dart';
 
 import '../../../../res/style/color_styles.dart';
 import '../../../../res/style/text_styles.dart';
@@ -207,7 +209,12 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: () {},
+                                  onPressed: () {
+                                    NavigatorUtil.push(
+                                      context,
+                                      Routers.personalQuota,
+                                    );
+                                  },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.indigo[700],
                                   shape: RoundedRectangleBorder(
@@ -268,14 +275,119 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                       crossAxisCount: 4,
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       children: [
-                        _buildFunctionButton('Quota', Icons.bolt_outlined),
-                        _buildFunctionButton('Deposit', Icons.account_balance_wallet_outlined),
-                        _buildFunctionButton('Withdrawal', Icons.credit_card_outlined),
-                        _buildFunctionButton('Service', Icons.headset_mic_outlined),
-                        _buildFunctionButton('Inbox', Icons.mail_outline),
-                        _buildFunctionButton('Password', Icons.lock_outline),
-                        _buildFunctionButton('Pin', Icons.shield_outlined),
-                        _buildFunctionButton('Logout', Icons.logout),
+                        _buildFunctionButton('Quota', Icons.bolt_outlined, () {
+                          NavigatorUtil.push(context, Routers.personalQuota);
+                        }),
+                        _buildFunctionButton('Deposit', Icons.account_balance_wallet_outlined, () {}),
+                        _buildFunctionButton('Withdrawal', Icons.credit_card_outlined, () {}),
+                        _buildFunctionButton('Service', Icons.headset_mic_outlined, () {}),
+                        _buildFunctionButton('Inbox', Icons.mail_outline, () {}),
+                        _buildFunctionButton('Password', Icons.lock_outline, () {
+                          NavigatorUtil.push(context, Routers.personalPassword);
+                        }),
+                        _buildFunctionButton('Pin', Icons.shield_outlined, () {
+                          NavigatorUtil.push(context, Routers.personalPin);
+                        }),
+                        _buildFunctionButton('Logout', Icons.logout, () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(24),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red[50],
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.logout_rounded,
+                                          color: Colors.red,
+                                          size: 30,
+                                        ),
+                                      ),
+                                      SizedBox(height: 16),
+                                      Text(
+                                        'Confirm Logout',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'Are you sure you want to logout?',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: 24),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.symmetric(vertical: 12),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  side: BorderSide(color: Colors.grey[300]!),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                // TODO: Add your logout logic here
+                                              },
+                                              style: TextButton.styleFrom(
+                                                padding: EdgeInsets.symmetric(vertical: 12),
+                                                backgroundColor: Colors.red,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Logout',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }),
                       ],
                     ),
                   ],
@@ -294,110 +406,9 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
     );
   }
 
-  Widget _buildFunctionButton(String label, IconData icon) {
+  Widget _buildFunctionButton(String label, IconData icon, VoidCallback onTap) {
     return GestureDetector(
-      onTap: () {
-        if (label == 'Logout') {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return Dialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.red[50],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.logout_rounded,
-                          color: Colors.red,
-                          size: 30,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Confirm Logout',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Are you sure you want to logout?',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(color: Colors.grey[300]!),
-                                ),
-                              ),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                // TODO: Add your logout logic here
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 12),
-                                backgroundColor: Colors.red,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text(
-                                'Logout',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        }
-      },
+      onTap: onTap,
       child: Container(
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(

@@ -685,7 +685,7 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
               SizedBox(height: 15),
               // Video player placeholder - increased height from 200 to 250
               Container(
-                height: 250, // Increased height
+                height: 200, // Increased height
                 width: double.infinity, // Ensure it takes full width
                 decoration: BoxDecoration(
                   color: Colors.black87,
@@ -764,6 +764,7 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
