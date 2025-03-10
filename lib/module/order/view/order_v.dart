@@ -61,6 +61,7 @@ class OrderViewState extends BaseStatefulPageState<OrderView, OrderViewModel> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: AppBarTheme.of(context).backgroundColor,
           title: Text(
             StrOrder.order,

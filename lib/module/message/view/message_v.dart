@@ -96,6 +96,7 @@ class MessageViewState extends BaseStatefulPageState<MessageView, MessageViewMod
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppBarTheme.of(context).backgroundColor,
+          automaticallyImplyLeading: false,
           title: Text(
             'Deposit',
             style: TextStyles.style_222222_20,

@@ -16,6 +16,7 @@ import '../module/home/view/home_v.dart';
 import '../module/order/view/order_v.dart';
 import '../module/personal/view/personal_v.dart';
 import '../module/teams/view/teams_v.dart';
+import '../module/auth/service/auth_service.dart';
 
 /// App初始化的第一个页面可能是 其他页面，比如 广告、引导页、登陆页面
 enum AppInitState {
@@ -48,14 +49,16 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     
-    // Check if first launch
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       bool isFirstLaunch = await checkIfFirstLaunch();
+      bool isLoggedIn = await AuthService.isLoggedIn();
+      
       if (isFirstLaunch) {
         NavigatorUtil.push(navigatorKey.currentContext!, Routers.onboarding);
+      } else if (!isLoggedIn) {
+        NavigatorUtil.push(navigatorKey.currentContext!, Routers.login);
       } else {
-        // If you already have default routing logic, you might not need this else branch
-        // NavigatorUtil.push(navigatorKey.currentContext!, Routers.root);
+        NavigatorUtil.push(navigatorKey.currentContext!, Routers.root);
       }
     });
   }

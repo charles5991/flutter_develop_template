@@ -16,6 +16,7 @@ import '../../../../res/style/color_styles.dart';
 import '../../../../res/style/text_styles.dart';
 import '../../../common/util/global.dart';
 import '../view_model/personal_vm.dart';
+import '../../auth/service/auth_service.dart';
 
 class PersonalView extends BaseStatefulPage {
   PersonalView({super.key});
@@ -284,7 +285,9 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                         _buildFunctionButton('Withdrawal', Icons.credit_card_outlined, () {
                           NavigatorUtil.push(context, Routers.personalWithdrawal);
                         }),
-                        _buildFunctionButton('Service', Icons.headset_mic_outlined, () {}),
+                        _buildFunctionButton('Service', Icons.headset_mic_outlined, () {
+                          NavigatorUtil.push(context, Routers.personalService);
+                        }),
                         _buildFunctionButton('Inbox', Icons.mail_outline, () {
                           NavigatorUtil.push(context, Routers.personalInbox);
                         }),
@@ -364,9 +367,12 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                                           SizedBox(width: 12),
                                           Expanded(
                                             child: TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                // TODO: Add your logout logic here
+                                              onPressed: () async {
+                                                await AuthService.logout();
+                                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                                  Routers.login,
+                                                  (route) => false,
+                                                );
                                               },
                                               style: TextButton.styleFrom(
                                                 padding: EdgeInsets.symmetric(vertical: 12),

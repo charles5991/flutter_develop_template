@@ -88,6 +88,7 @@ class HomeViewState extends BaseStatefulPageState<HomeView, HomeViewModel> {
   Widget appBuild(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: AppBarTheme.of(context).backgroundColor,
         centerTitle: true,
         /// 局部刷新

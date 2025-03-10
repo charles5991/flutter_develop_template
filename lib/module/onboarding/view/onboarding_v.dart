@@ -5,6 +5,7 @@ import 'package:flutter_develop_template/module/onboarding/model/onboarding_m.da
 import 'package:flutter_develop_template/module/onboarding/view_model/onboarding_vm.dart';
 import 'package:flutter_develop_template/router/navigator_util.dart';
 import 'package:flutter_develop_template/router/routers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingView extends BaseStatefulPage<OnboardingViewModel> {
   OnboardingView({super.key});
@@ -172,7 +173,11 @@ class OnboardingViewState extends BaseStatefulPageState<OnboardingView, Onboardi
           
           // Next/Get Started button
           ElevatedButton(
-            onPressed: viewModel!.nextStep,
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('first_launch', false);  // Mark first launch as complete
+              NavigatorUtil.push(context, Routers.login);  // Navigate to login
+            },
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
