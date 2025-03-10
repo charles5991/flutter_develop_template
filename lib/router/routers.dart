@@ -8,12 +8,17 @@ import 'package:flutter_develop_template/module/test_fluro/page_c.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_personal_quota.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_addTool.dart';
 import 'package:flutter_develop_template/module/onboarding/view/onboarding_v.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../module/order/view/order_v.dart';
 import '../../module/test_fluro/page_d.dart';
 
 class Routers {
   static FluroRouter router = FluroRouter();
+
+  // Add this transition configuration
+  static final TransitionType _transitionType = TransitionType.fadeIn;
+  static final Duration _transitionDuration = Duration(milliseconds: 300);
 
   // 配置路由
   static void configureRouters() {
@@ -61,13 +66,14 @@ class Routers {
 
   // 注册路由
   static _initRouter() {
-
-    // 根页面
+    // Root page with fade transition
     router.define(
       root,
       handler: Handler(
         handlerFunc: (_, __) => AppMainPage(),
       ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // 页面A 需要 非对象类型 参数（通过 拼接 传参数）
@@ -116,6 +122,8 @@ class Routers {
           );
         },
       ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // 页面B 需要 对象类型 参数
@@ -128,6 +136,8 @@ class Routers {
           return PageBView(paramsModel: paramsModel);
         },
       ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // 页面C 无参数
@@ -136,6 +146,8 @@ class Routers {
       handler: Handler(
         handlerFunc: (_, __) => PageCView(),
       ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // 页面D 无参数
@@ -144,12 +156,18 @@ class Routers {
       handler: Handler(
         handlerFunc: (_, __) => PageDView(),
       ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // 页面AddTool 无参数
     router.define(
       pageAddTool,
-      handler: Handler(handlerFunc: (_, __) => PageAddToolView()),
+      handler: Handler(
+        handlerFunc: (_, __) => PageAddToolView(),
+      ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // 引导页
@@ -158,13 +176,15 @@ class Routers {
       handler: Handler(
         handlerFunc: (_, __) => OnboardingView(),
       ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
     );
 
     // Quota明细
-    router.define(
-      personalQuota,
-      handler: Handler(handlerFunc: (_, __) => PersonalQuotaView()),
-    );
+    // router.define(
+    //   personalQuota,
+    //   handler: Handler(handlerFunc: (_, __) => PersonalQuotaView()),
+    // );
   }
 
 }

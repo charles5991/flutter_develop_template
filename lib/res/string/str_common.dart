@@ -5,44 +5,44 @@
 /// 通用
 class StrCommon {
 
-  static const String pleaseService = '请联系客服';
-  static const String platformNotAdapted = '当前平台未适配';
-  static const String executeSwitchUser = '执行了切换用户操作';
+  static const String pleaseService = 'Please contact customer service';
+  static const String platformNotAdapted = 'The current platform is not adapted';
+  static const String executeSwitchUser = 'Executed the switch user operation';
 
-  static const String loading = '加载中...';
-  static const String dataIsEmpty = '数据为空';
-  static const String listDataIsEmpty = '列表数据为空';
-  static const String businessDoesNotPass = '业务不通过';
-  static const String dioErrorAnomaly = 'dioError异常';
-  static const String unknownAnomaly = '未知异常';
+  static const String loading = 'Loading...';
+  static const String dataIsEmpty = 'Data is empty';
+  static const String listDataIsEmpty = 'List data is empty';
+  static const String businessDoesNotPass = 'Business does not pass';
+  static const String dioErrorAnomaly = 'dioError anomaly';
+  static const String unknownAnomaly = 'Unknown anomaly';
 
-  static const String pullDownToRefresh = '下拉刷新';
-  static const String refreshing = '刷新中...';
-  static const String loadedSuccess = '加载成功';
-  static const String releaseToRefreshImmediately = '松开立即刷新';
-  static const String refreshFailed = '刷新失败';
-  static const String pullUpLoad = '上拉加载';
-  static const String letGoLoading = '松手开始加载数据';
-  static const String failedLoad = '加载失败';
-  static const String noMoreData = '没有更多数据了';
+  static const String pullDownToRefresh = 'Pull down to refresh';
+  static const String refreshing = 'Refreshing...';
+  static const String loadedSuccess = 'Loaded successfully';
+  static const String releaseToRefreshImmediately = 'Release to refresh immediately';
+  static const String refreshFailed = 'Refresh failed';
+  static const String pullUpLoad = 'Pull up load';
+  static const String letGoLoading = 'Let go to start loading data';
+  static const String failedLoad = 'Failed to load';
+  static const String noMoreData = 'No more data';
 
-  static const String connectionTimeout = '连接超时';
-  static const String sendTimeout = '发送超时';
-  static const String receiveTimeout = '接收超时';
-  static const String accessCertificateError = '访问证书错误';
-  static const String validationFailed = '验证失败';
-  static const String connectionIsAbnormal = '连接异常';
-  static const String unknownError = '未知错误';
+  static const String connectionTimeout = 'Connection timeout';
+  static const String sendTimeout = 'Send timeout';
+  static const String receiveTimeout = 'Receive timeout';
+  static const String accessCertificateError = 'Access certificate error';
+  static const String validationFailed = 'Validation failed';
+  static const String connectionIsAbnormal = 'Connection anomaly';
+  static const String unknownError = 'Unknown error';
 
-  static const String parameterIsIncorrect = '参数有误';
-  static const String illegalRequests = '非法请求';
-  static const String serverRejectsRequest = '服务器拒绝请求';
-  static const String accessAddressDoesNotExist = '访问地址不存在';
-  static const String requestIsMadeWrongWay = '请求方式错误';
-  static const String wasAnErrorInsideServer = '服务器内部出错了';
-  static const String invalidRequest = '无效的请求';
-  static const String serverIsBusy = '服务器繁忙';
-  static const String unsupportedHttpProtocol = '不支持的HTTP协议';
+  static const String parameterIsIncorrect = 'Parameter is incorrect';
+  static const String illegalRequests = 'Illegal requests';
+  static const String serverRejectsRequest = 'Server rejects request';
+  static const String accessAddressDoesNotExist = 'Access address does not exist';
+  static const String requestIsMadeWrongWay = 'Request is made wrong way';
+  static const String wasAnErrorInsideServer = 'Server internal error';
+  static const String invalidRequest = 'Invalid request';
+  static const String serverIsBusy = 'Server is busy';
+  static const String unsupportedHttpProtocol = 'Unsupported HTTP protocol';
 
 
   ///--------------------------- 测试路由 -------------------------------
@@ -52,10 +52,10 @@ class StrCommon {
   static const String pageC = 'PageC';
   static const String pageD = 'PageD';
 
-  static const String toPageCDestroyCurrent = '前往PageC，并销毁当前页面';
-  static const String routeInterceptFromPageAtoPageD = '路由拦截 从PageA前往PageD';
-  static const String backPreviousPage = '返回上一页';
-  static const String toPageD = '前往PageD';
-  static const String toHomeDestroyAll = '前往首页，并销毁所有页面';
+  static const String toPageCDestroyCurrent = 'Go to PageC, and destroy the current page';
+  static const String routeInterceptFromPageAtoPageD = 'Route intercept from PageA to PageD';
+  static const String backPreviousPage = 'Back to the previous page';
+  static const String toPageD = 'Go to PageD';
+  static const String toHomeDestroyAll = 'Go to the home page, and destroy all pages';
 
 }

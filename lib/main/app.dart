@@ -182,34 +182,55 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
   }
 
   void bottomTap(int index) {
-    bottomSelectedIndex = index;
-    pageController?.jumpToPage(index);
-    setState(() {});
+    setState(() {
+      bottomSelectedIndex = index;
+      pageController?.jumpToPage(index);
+    });
   }
 
   int bottomSelectedIndex = 0;
 
   List<BottomNavigationBarItem> buildBottomNavBarItems() {
     return [
-      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-      BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Deposit'),
-      BottomNavigationBarItem(icon: Icon(Icons.add_chart), label: 'Tools'),
-      BottomNavigationBarItem(icon: Icon(Icons.groups), label: 'Teams'),
-      BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Assets'),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home_outlined),
+        activeIcon: Icon(Icons.home),
+        label: 'Home'
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.chat_bubble_outline),
+        activeIcon: Icon(Icons.chat_bubble),
+        label: 'Deposit'
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.build_outlined),
+        activeIcon: Icon(Icons.build),
+        label: 'Tools'
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.people_outline),
+        activeIcon: Icon(Icons.people),
+        label: 'Teams'
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person_outline),
+        activeIcon: Icon(Icons.person),
+        label: 'Assets'
+      ),
     ];
   }
 
   Widget buildPageView() {
     return PageView(
-      physics: NeverScrollableScrollPhysics(), // 禁止滑动
+      physics: NeverScrollableScrollPhysics(),
       controller: pageController,
       onPageChanged: pageChanged,
       children: <Widget>[
-        HomeView(),
-        MessageView(),
-        OrderView(),
-        TeamsView(),
-        PersonalView(),
+        HomeView(),       // Home
+        MessageView(),    // Deposit
+        OrderView(),      // Tools (you might want to create a dedicated ToolsView)
+        TeamsView(),      // Teams
+        PersonalView(),   // Assets
       ],
     );
   }
@@ -218,16 +239,104 @@ class AppMainPageState extends BaseStatefulPageState<AppMainPage,AppMainPageView
   Widget appBuild(BuildContext context) {
     return Scaffold(
       body: buildPageView(),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: ColorStyles.color_FFFFFF,
-        type: BottomNavigationBarType.fixed, // 自适应宽度，但同时会失去，图标/文字 缩放效果
-        currentIndex: bottomSelectedIndex,
-        onTap: bottomTap,
-        items: buildBottomNavBarItems(),
-        unselectedItemColor: ColorStyles.color_1E88E5, // 未选中状态下的颜色
-        unselectedFontSize: 14, // 未选中状态下的字体大小
-        selectedItemColor: ColorStyles.color_EA5034, // 选中状态下的颜色
-        selectedFontSize: 14, // 选中状态下的字体大小
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 15,
+              offset: Offset(0, -5),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(5, (index) => _buildNavItem(index)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index) {
+    final List<IconData> unselectedIcons = [
+      Icons.chat_bubble_outline,
+      Icons.search,
+      Icons.access_time,
+      Icons.notifications_none,
+      Icons.person_outline,
+    ];
+
+    final List<IconData> selectedIcons = [
+      Icons.chat_bubble,
+      Icons.search,
+      Icons.access_time,
+      Icons.notifications,
+      Icons.person,
+    ];
+
+    final List<String> labels = ['Home', 'Deposit', 'Tools', 'Teams', 'Assets'];
+
+    return GestureDetector(
+      onTap: () => bottomTap(index),
+      child: Container(
+        width: 50,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              padding: EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: bottomSelectedIndex == index 
+                    ? Colors.grey[200] 
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: AnimatedSwitcher(
+                duration: Duration(milliseconds: 300),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  );
+                },
+                child: Icon(
+                  bottomSelectedIndex == index 
+                      ? selectedIcons[index] 
+                      : unselectedIcons[index],
+                  key: ValueKey<bool>(bottomSelectedIndex == index),
+                  color: bottomSelectedIndex == index 
+                      ? Colors.black 
+                      : Colors.grey,
+                  size: 24,
+                ),
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              labels[index],
+              style: TextStyle(
+                fontSize: 10,
+                color: bottomSelectedIndex == index 
+                    ? Colors.black 
+                    : Colors.grey,
+                fontWeight: bottomSelectedIndex == index 
+                    ? FontWeight.w500 
+                    : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
