@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'dart:math';
 
 class PageWithdrawal extends StatefulWidget {
   const PageWithdrawal({super.key});
@@ -9,16 +11,145 @@ class PageWithdrawal extends StatefulWidget {
 
 class _PageWithdrawalState extends State<PageWithdrawal> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final Map<String, RefreshController> _refreshControllers = {
+    'Paying': RefreshController(),
+    'Success': RefreshController(),
+    'Timeout': RefreshController(),
+    'Offline': RefreshController(),
+  };
+  final Map<String, bool> _hasMore = {
+    'Paying': true,
+    'Success': true,
+    'Timeout': true,
+    'Offline': true,
+  };
+  final Map<String, int> _currentPage = {
+    'Paying': 1,
+    'Success': 1,
+    'Timeout': 1,
+    'Offline': 1,
+  };
+  
+  // Store transactions for each tab
+  final Map<String, List<Map<String, dynamic>>> _tabTransactions = {
+    'Paying': [],
+    'Success': [],
+    'Timeout': [],
+    'Offline': [],
+  };
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _initializeData();
+  }
+
+  void _initializeData() {
+    _tabTransactions['Success'] = [
+      {
+        'amount': '₹ 1500.00',
+        'type': 'UPI Withdrawal',
+        'date': '2024-03-15',
+        'time': '14:30:25',
+        'status': 'Success',
+        'id': 'WTH123456789'
+      },
+      {
+        'amount': '₹ 2500.00',
+        'type': 'Bank Withdrawal',
+        'date': '2024-03-15',
+        'time': '13:45:12',
+        'status': 'Success',
+        'id': 'WTH123456788'
+      },
+    ];
+    
+    _tabTransactions['Paying'] = [
+      {
+        'amount': '₹ 3000.00',
+        'type': 'UPI Withdrawal',
+        'date': '2024-03-15',
+        'time': '16:30:00',
+        'status': 'Paying',
+        'id': 'WTH123456787'
+      }
+    ];
+  }
+
+  Future<List<Map<String, dynamic>>> _getMoreTransactions(String status) async {
+    await Future.delayed(Duration(seconds: 1));
+    
+    if (_currentPage[status]! >= 3) {
+      return [];
+    }
+
+    return List.generate(2, (index) => {
+      'amount': '₹ ${(1000 + Random().nextInt(5000)).toStringAsFixed(2)}',
+      'type': Random().nextBool() ? 'UPI Withdrawal' : 'Bank Withdrawal',
+      'date': '2024-03-15',
+      'time': '${Random().nextInt(24)}:${Random().nextInt(60)}:${Random().nextInt(60)}',
+      'status': status,
+      'id': 'WTH${DateTime.now().millisecondsSinceEpoch}$index',
+    });
+  }
+
+  void _onRefresh(String status) async {
+    await Future.delayed(Duration(seconds: 1));
+    
+    setState(() {
+      // Generate 3 random transactions when refreshing an empty tab
+      if (_tabTransactions[status]!.isEmpty) {
+        _tabTransactions[status] = List.generate(3, (index) => {
+          'amount': '₹ ${(1000 + Random().nextInt(5000)).toStringAsFixed(2)}',
+          'type': Random().nextBool() ? 'UPI Withdrawal' : 'Bank Withdrawal',
+          'date': '2024-03-15',
+          'time': '${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}',
+          'status': status,
+          'id': 'WTH${DateTime.now().millisecondsSinceEpoch}$index',
+        });
+      } else {
+        // Add one new transaction at the top for non-empty tabs
+        _tabTransactions[status]!.insert(0, {
+          'amount': '₹ ${(1000 + Random().nextInt(5000)).toStringAsFixed(2)}',
+          'type': Random().nextBool() ? 'UPI Withdrawal' : 'Bank Withdrawal',
+          'date': '2024-03-15',
+          'time': '${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}',
+          'status': status,
+          'id': 'WTH${DateTime.now().millisecondsSinceEpoch}',
+        });
+      }
+    });
+    
+    _refreshControllers[status]!.refreshCompleted();
+  }
+
+  void _onLoading(String status) async {
+    if (!_hasMore[status]!) {
+      _refreshControllers[status]!.loadNoData();
+      return;
+    }
+
+    final newTransactions = await _getMoreTransactions(status);
+    
+    if (newTransactions.isEmpty) {
+      setState(() {
+        _hasMore[status] = false;
+      });
+      _refreshControllers[status]!.loadNoData();
+    } else {
+      setState(() {
+        _tabTransactions[status]!.addAll(newTransactions);
+        _currentPage[status] = _currentPage[status]! + 1;
+      });
+      _refreshControllers[status]!.loadComplete();
+    }
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _refreshControllers.values.forEach((controller) => controller.dispose());
     super.dispose();
   }
 
@@ -82,108 +213,131 @@ class _PageWithdrawalState extends State<PageWithdrawal> with SingleTickerProvid
   }
 
   Widget _buildTransactionList(String status) {
-    // Dummy data - you can replace this with real data
-    List<Map<String, dynamic>> transactions = status == 'Success' ? [
-      {
-        'amount': '₹ 1500.00',
-        'type': 'UPI Withdrawal',
-        'date': '2024-03-15',
-        'time': '14:30:25',
-        'status': status,
-        'id': 'TXN123456789'
-      },
-      {
-        'amount': '₹ 2500.00',
-        'type': 'Bank Withdrawal',
-        'date': '2024-03-15',
-        'time': '13:45:12',
-        'status': status,
-        'id': 'TXN123456788'
-      },
-      // Add more transactions as needed
-    ] : [];
+    final transactions = _tabTransactions[status] ?? [];
 
     if (transactions.isEmpty) {
       return _buildEmptyState('No $status transactions');
     }
 
-    return ListView.builder(
-      itemCount: transactions.length,
-      padding: EdgeInsets.all(16),
-      itemBuilder: (context, index) {
-        final transaction = transactions[index];
-        return Card(
-          elevation: 0,
-          margin: EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey[200]!),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      transaction['amount'],
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(transaction['status']).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        transaction['status'],
+    return SmartRefresher(
+      controller: _refreshControllers[status]!,
+      enablePullDown: true,
+      enablePullUp: true,
+      header: WaterDropHeader(
+        complete: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.done, color: Colors.grey),
+            SizedBox(width: 8),
+            Text(
+              'Refresh completed',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+      footer: CustomFooter(
+        builder: (context, mode) {
+          Widget body;
+          if (mode == LoadStatus.idle) {
+            body = Text("Pull up to load more");
+          } else if (mode == LoadStatus.loading) {
+            body = CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(Colors.indigo[700]),
+            );
+          } else if (mode == LoadStatus.failed) {
+            body = Text("Load failed! Click retry!");
+          } else if (mode == LoadStatus.canLoading) {
+            body = Text("Release to load more");
+          } else {
+            body = Text("No more data");
+          }
+          return Container(
+            height: 55.0,
+            child: Center(child: body),
+          );
+        },
+      ),
+      onRefresh: () => _onRefresh(status),
+      onLoading: () => _onLoading(status),
+      child: ListView.builder(
+        itemCount: transactions.length,
+        padding: EdgeInsets.all(16),
+        itemBuilder: (context, index) {
+          final transaction = transactions[index];
+          return Card(
+            elevation: 0,
+            margin: EdgeInsets.only(bottom: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Colors.grey[200]!),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        transaction['amount'],
                         style: TextStyle(
-                          color: _getStatusColor(transaction['status']),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Text(
-                  transaction['type'],
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(transaction['status']).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          transaction['status'],
+                          style: TextStyle(
+                            color: _getStatusColor(transaction['status']),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${transaction['date']} ${transaction['time']}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                      ),
+                  SizedBox(height: 8),
+                  Text(
+                    transaction['type'],
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
                     ),
-                    Text(
-                      transaction['id'],
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${transaction['date']} ${transaction['time']}',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        transaction['id'],
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
