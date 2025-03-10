@@ -285,7 +285,9 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                           NavigatorUtil.push(context, Routers.personalWithdrawal);
                         }),
                         _buildFunctionButton('Service', Icons.headset_mic_outlined, () {}),
-                        _buildFunctionButton('Inbox', Icons.mail_outline, () {}),
+                        _buildFunctionButton('Inbox', Icons.mail_outline, () {
+                          NavigatorUtil.push(context, Routers.personalInbox);
+                        }),
                         _buildFunctionButton('Password', Icons.lock_outline, () {
                           NavigatorUtil.push(context, Routers.personalPassword);
                         }),

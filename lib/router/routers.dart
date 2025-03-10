@@ -16,6 +16,7 @@ import 'package:flutter_develop_template/module/test_fluro/page_change_password.
 import 'package:flutter_develop_template/module/test_fluro/page_change_pin.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_deposit.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_withdrawal.dart';
+import 'package:flutter_develop_template/module/test_fluro/page_inbox.dart';
 
 class Routers {
   static FluroRouter router = FluroRouter();
@@ -71,6 +72,7 @@ class Routers {
   // Add these new routes
   static String personalPassword = "/personal/password";
   static String personalPin = "/personal/pin";
+  static String personalInbox = "/personal/inbox";
   static String personalDeposit = "/personal/deposit";
   static String personalWithdrawal = "/personal/withdrawal";
 
@@ -219,6 +221,12 @@ class Routers {
     router.define(personalWithdrawal, handler: Handler(
       handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
         return PageWithdrawal();
+      }
+    ));
+
+    router.define(personalInbox, handler: Handler(
+      handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+        return PageInbox();
       }
     ));
   }
