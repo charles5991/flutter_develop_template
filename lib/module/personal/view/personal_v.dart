@@ -29,12 +29,26 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
   final RefreshController _refreshController = RefreshController();
   String quotaValue = '97147.86';
   String todayEarnings = '5.49';
+  String? userPhone;
 
   @override
   void initAttribute() {}
 
   @override
   void initObserver() {}
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserPhone();
+  }
+
+  Future<void> _loadUserPhone() async {
+    String? phone = await AuthService.getLoggedInPhone();
+    setState(() {
+      userPhone = phone;
+    });
+  }
 
   @override
   viewBindingViewModel() {
@@ -115,7 +129,7 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                                 Row(
                                   children: [
                                     Text(
-                                      'Umoney888',
+                                      userPhone ?? 'Loading...',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -127,14 +141,16 @@ class PersonalViewState extends BaseStatefulPageState<PersonalView, PersonalView
                                       constraints: BoxConstraints(),
                                       icon: Icon(Icons.copy, size: 16, color: Colors.indigo[700]),
                                       onPressed: () async {
-                                        await Clipboard.setData(ClipboardData(text: 'Umoney888'));
-                                        if (mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Username copied to clipboard'),
-                                              duration: Duration(seconds: 2),
-                                            ),
-                                          );
+                                        if (userPhone != null) {
+                                          await Clipboard.setData(ClipboardData(text: userPhone!));
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Phone number copied to clipboard'),
+                                                duration: Duration(seconds: 2),
+                                              ),
+                                            );
+                                          }
                                         }
                                       },
                                     ),

@@ -37,4 +37,9 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // Clear everything on fresh install
   }
+
+  static Future<String?> getLoggedInPhone() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(KEY_USER_PHONE);
+  }
 } 

@@ -19,6 +19,7 @@ import 'package:flutter_develop_template/module/test_fluro/page_withdrawal.dart'
 import 'package:flutter_develop_template/module/test_fluro/page_inbox.dart';
 import 'package:flutter_develop_template/module/test_fluro/page_service.dart';
 import 'package:flutter_develop_template/module/auth/view/login_page.dart';
+import 'package:flutter_develop_template/module/auth/view/forgot_password.dart';
 
 class Routers {
   static FluroRouter router = FluroRouter();
@@ -81,6 +82,9 @@ class Routers {
 
   // Add login route
   static String login = '/login';
+
+  // Forgot Password
+  static String forgotPassword = '/forgot-password';
 
   // 注册路由
   static _initRouter() {
@@ -247,6 +251,16 @@ class Routers {
       login,
       handler: Handler(
         handlerFunc: (_, __) => LoginPage(),
+      ),
+      transitionType: _transitionType,
+      transitionDuration: _transitionDuration,
+    );
+
+    // Forgot Password
+    router.define(
+      forgotPassword,
+      handler: Handler(
+        handlerFunc: (_, __) => ForgotPasswordPage(),
       ),
       transitionType: _transitionType,
       transitionDuration: _transitionDuration,

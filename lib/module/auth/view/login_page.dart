@@ -4,6 +4,7 @@ import 'package:flutter_develop_template/router/navigator_util.dart';
 import 'package:flutter_develop_template/router/routers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_develop_template/module/auth/service/auth_service.dart';
+import 'package:flutter_develop_template/module/auth/view/forgot_password.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -164,7 +165,10 @@ class _LoginPageState extends State<LoginPage> {
               // Forgot password
               TextButton(
                 onPressed: () {
-                  // TODO: Implement forgot password
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                  );
                 },
                 child: Text(
                   'Forgot password',
