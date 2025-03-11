@@ -50,24 +50,24 @@ class _AppState extends State<App> {
     super.initState();
     
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      bool isFirstLaunch = await checkIfFirstLaunch();
-      bool isLoggedIn = await AuthService.isLoggedIn();
-      
-      if (isFirstLaunch) {
-        NavigatorUtil.push(navigatorKey.currentContext!, Routers.onboarding);
-      } else if (!isLoggedIn) {
-        NavigatorUtil.push(navigatorKey.currentContext!, Routers.login);
-      } else {
-        NavigatorUtil.push(navigatorKey.currentContext!, Routers.root);
-      }
+      await _handleInitialRoute();
     });
   }
-  
-  // Helper method to check first launch
-  Future<bool> checkIfFirstLaunch() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstLaunch = prefs.getBool('first_launch') ?? true;
-    return isFirstLaunch;
+
+  Future<void> _handleInitialRoute() async {
+    bool isLoggedIn = await AuthService.isLoggedIn();
+    bool hasSeenOnboarding = await AuthService.hasSeenOnboarding();
+
+    if (!isLoggedIn) {
+      // Not logged in -> go to login
+      NavigatorUtil.push(navigatorKey.currentContext!, Routers.login);
+    } else if (!hasSeenOnboarding) {
+      // Logged in but hasn't seen onboarding -> go to onboarding
+      NavigatorUtil.push(navigatorKey.currentContext!, Routers.onboarding);
+    } else {
+      // Logged in and has seen onboarding -> go to main app
+      NavigatorUtil.push(navigatorKey.currentContext!, Routers.root);
+    }
   }
 
   @override

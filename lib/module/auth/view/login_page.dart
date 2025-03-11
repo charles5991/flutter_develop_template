@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';  // NOT 'package:sh
 import 'package:flutter_develop_template/router/navigator_util.dart';
 import 'package:flutter_develop_template/router/routers.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_develop_template/module/auth/service/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -22,12 +23,25 @@ class _LoginPageState extends State<LoginPage> {
     
     if (_phoneController.text == '1234522112' && 
         _passwordController.text == '123456') {
-      // Store login state
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
+      // Store login session
+      await AuthService.login(_phoneController.text);
       
-      // Navigate to main app
-      NavigatorUtil.push(context, Routers.root);
+      // Check if user has seen onboarding
+      bool hasSeenOnboarding = await AuthService.hasSeenOnboarding();
+      
+      if (!hasSeenOnboarding) {
+        // First time login -> go to onboarding
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          Routers.onboarding,
+          (route) => false,
+        );
+      } else {
+        // Returning user -> go to main app
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          Routers.root,
+          (route) => false,
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Invalid credentials'))

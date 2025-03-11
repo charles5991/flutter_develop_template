@@ -6,6 +6,7 @@ import 'package:flutter_develop_template/module/onboarding/view_model/onboarding
 import 'package:flutter_develop_template/router/navigator_util.dart';
 import 'package:flutter_develop_template/router/routers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_develop_template/module/auth/service/auth_service.dart';
 
 class OnboardingView extends BaseStatefulPage<OnboardingViewModel> {
   OnboardingView({super.key});
@@ -173,10 +174,18 @@ class OnboardingViewState extends BaseStatefulPageState<OnboardingView, Onboardi
           
           // Next/Get Started button
           ElevatedButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('first_launch', false);  // Mark first launch as complete
-              NavigatorUtil.push(context, Routers.login);  // Navigate to login
+            onPressed: () {
+              if (model.isLastStep) {
+                // If it's the last step, complete onboarding and go to home
+                AuthService.markOnboardingComplete();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  Routers.root,
+                  (route) => false,
+                );
+              } else {
+                // If not the last step, go to next step
+                viewModel!.nextStep();
+              }
             },
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),

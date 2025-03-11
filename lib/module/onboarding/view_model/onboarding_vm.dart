@@ -35,19 +35,14 @@ class OnboardingViewModel extends PageViewModel<OnboardingViewState> {
   }
   
   void nextStep() {
-    OnboardingModel? model = pageDataModel?.data as OnboardingModel?;
-    if (model != null) {
-      if (!model.isLastStep) {
-        model.nextStep();
-        pageController.animateToPage(
-          model.currentStepIndex,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      } else {
-        model.completed = true;
-      }
-      pageDataModel?.refreshState();
+    if (pageController != null && 
+        pageDataModel?.data != null &&
+        (pageDataModel!.data as OnboardingModel).currentStepIndex < 
+        (pageDataModel!.data as OnboardingModel).steps.length - 1) {
+      pageController!.nextPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
   
