@@ -15,8 +15,42 @@ class _LoginPageState extends State<LoginPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  
+  // Add validation error states
+  String? _phoneError;
+  String? _passwordError;
 
   Future<void> _handleLogin() async {
+    // Reset previous errors
+    setState(() {
+      _phoneError = null;
+      _passwordError = null;
+    });
+
+    // Validate fields
+    bool isValid = true;
+
+    if (_phoneController.text.isEmpty) {
+      setState(() {
+        _phoneError = 'Phone number is required';
+      });
+      isValid = false;
+    } else if (_phoneController.text.length != 10) {
+      setState(() {
+        _phoneError = 'Please enter a valid 10-digit phone number';
+      });
+      isValid = false;
+    }
+
+    if (_passwordController.text.isEmpty) {
+      setState(() {
+        _passwordError = 'Password is required';
+      });
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
     setState(() => _isLoading = true);
     
     // Simulate API call delay
@@ -79,64 +113,118 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 48),
               
-              // Phone input
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Text(
-                        '+91',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 16,
-                        ),
+              // Phone input with error
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _phoneError != null ? Colors.red : Colors.transparent,
+                        width: 1,
                       ),
                     ),
-                    SizedBox(width: 8), // Space between prefix and input
-                    Expanded(
-                      child: TextField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.number,
-                        maxLength: 10,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Enter your phone number',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                          counterText: "",
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text(
+                            '+91',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                      ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.number,
+                            maxLength: 10,
+                            onChanged: (value) {
+                              if (_phoneError != null) {
+                                setState(() {
+                                  _phoneError = null;
+                                });
+                              }
+                            },
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Enter your phone number',
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                              counterText: "",
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              
-              // Password input
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter password',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
                   ),
-                ),
+                  if (_phoneError != null)
+                    Padding(
+                      padding: EdgeInsets.only(top: 8, left: 4),
+                      child: Text(
+                        _phoneError!,
+                        style: TextStyle(
+                          color: Colors.red[300],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              SizedBox(height: 24),
+              SizedBox(height: _phoneError != null ? 8 : 16),
+              
+              // Password input with error
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _passwordError != null ? Colors.red : Colors.transparent,
+                        width: 1,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      onChanged: (value) {
+                        if (_passwordError != null) {
+                          setState(() {
+                            _passwordError = null;
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter password',
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                    ),
+                  ),
+                  if (_passwordError != null)
+                    Padding(
+                      padding: EdgeInsets.only(top: 8, left: 4),
+                      child: Text(
+                        _passwordError!,
+                        style: TextStyle(
+                          color: Colors.red[300],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              SizedBox(height: _passwordError != null ? 16 : 24),
               
               // Login button
               SizedBox(
@@ -144,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black87,
+                    backgroundColor: Color(0xFF6366F1), // Lighter purple color
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
