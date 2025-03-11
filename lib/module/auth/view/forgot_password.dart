@@ -10,12 +10,12 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
   bool _isLoading = false;
+  bool _isVerified = false;  // To track if OTP is verified
   
-  // Add these variables for OTP timer
+  // OTP timer variables
   bool _isOtpSent = false;
   int _timeLeft = 60;
   Timer? _timer;
@@ -23,7 +23,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF4338CA), // Same purple as login page
+      backgroundColor: Color(0xFF4338CA),
       appBar: AppBar(
         backgroundColor: Color(0xFF4338CA),
         elevation: 0,
@@ -43,9 +43,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // New Password Label
+              // Phone number input
               Text(
-                'New Password',
+                'Phone Number',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -53,53 +53,47 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
               ),
               SizedBox(height: 8),
-              // New Password Input
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: TextField(
-                  controller: _newPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter new password',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Text(
+                        '+91',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter your phone number',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                          counterText: "",
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 24),
 
-              // Confirm Password Label
-              Text(
-                'Confirm Password',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 8),
-              // Confirm Password Input
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: TextField(
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Confirm new password',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                ),
-              ),
-              SizedBox(height: 24),
-
-              // OTP Label
+              // OTP Input
               Text(
                 'OTP',
                 style: TextStyle(
@@ -109,7 +103,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
               ),
               SizedBox(height: 8),
-              // OTP Input
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -133,20 +126,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                     ),
                     Container(
-                      height: 48, // Match the height of the input
+                      height: 48,
                       child: TextButton(
-                        onPressed: _isOtpSent
-                            ? null
-                            : () {
+                        onPressed: _phoneController.text.length == 10 && !_isOtpSent
+                            ? () {
                                 _startOtpTimer();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('OTP sent to your phone')),
                                 );
-                              },
+                              }
+                            : null,
                         child: Text(
                           _isOtpSent ? '$_timeLeft s' : 'Get OTP',
                           style: TextStyle(
-                            color: _isOtpSent ? Colors.grey : Colors.indigo,
+                            color: _phoneController.text.length == 10 && !_isOtpSent 
+                                ? Colors.indigo 
+                                : Colors.grey,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -157,12 +152,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
               SizedBox(height: 48),
 
-              // Confirm Button
+              // Verify Button
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleResetPassword,
+                  onPressed: _isLoading ? null : _handleVerifyOTP,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black87,
                     shape: RoundedRectangleBorder(
@@ -172,7 +167,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   child: _isLoading
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          'Confirm',
+                          'Verify & Reset Password',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -187,19 +182,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Future<void> _handleResetPassword() async {
-    if (_newPasswordController.text.isEmpty ||
-        _confirmPasswordController.text.isEmpty ||
-        _otpController.text.isEmpty) {
+  Future<void> _handleVerifyOTP() async {
+    if (_phoneController.text.isEmpty || _otpController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill all fields')),
       );
       return;
     }
 
-    if (_newPasswordController.text != _confirmPasswordController.text) {
+    if (_phoneController.text.length != 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passwords do not match')),
+        SnackBar(content: Text('Please enter a valid phone number')),
       );
       return;
     }
@@ -211,11 +204,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
     setState(() => _isLoading = false);
 
-    // Show success message and navigate back to login
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Password reset successful')),
-    );
-    Navigator.of(context).pop();
+    // For demo, let's assume OTP is "123456"
+    if (_otpController.text == "123456") {
+      // Show success message and navigate to reset password page
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('OTP verified successfully')),
+      );
+      // Here you would typically navigate to a reset password page
+      // or show a password reset dialog
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid OTP')),
+      );
+    }
   }
 
   // Add method to handle OTP timer
@@ -242,8 +244,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
+    _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
   }
